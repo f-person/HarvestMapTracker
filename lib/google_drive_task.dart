@@ -47,8 +47,9 @@ class GoogleDriveManager {
       }
     } else {
       final googleSignInAccount = await googleSignIn.signIn();
-      //await googleSignInAccount.authHeaders;
-      await afterGoogleLogin(googleSignInAccount);
+      if (googleSignInAccount != null) {
+        await afterGoogleLogin(googleSignInAccount);
+      }
     }
   }
 

@@ -79,7 +79,7 @@ class PlaceAction {
   }
 
   static Future<void> onNavigate(List<Place> _selectedPlaces) async {
-    assert(_selectedPlaces.isNotEmpty);
+    //assert(_selectedPlaces.isNotEmpty);
     var navPlaces = _selectedPlaces.toList();
     var position = await getCurrentLocation();
     navPlaces.sort((a, b) {

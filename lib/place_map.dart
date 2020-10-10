@@ -11,6 +11,7 @@ import 'package:uuid/uuid.dart';
 
 import 'app_notification.dart';
 import 'app_storage.dart';
+import 'dialog.dart';
 import 'google_drive_task.dart';
 import 'harvest_tracker_app.dart';
 import 'place.dart';
@@ -110,29 +111,11 @@ class PlaceMapState extends State<PlaceMap> {
   }
 
   Future<void> runNotification() async {
-    if (await AppStorage.isRunNotification(true) ||
-        await AppStorage.isRunNotification(false)) {
-      await showDialog<void>(
-        context: context,
-        builder: (context) => CupertinoAlertDialog(
-          title: Text('Confirm'),
-          content: Text('Please select Navigation or Send Email'),
-          actions: [
-            CupertinoDialogAction(
-              child: Text('Navigate'),
-              onPressed: () async {
-                await PlaceAction.onNavigationAction();
-              },
-            ),
-            CupertinoDialogAction(
-              child: Text('Send Email'),
-              onPressed: () async {
-                await PlaceAction.onSendEmailAction();
-              },
-            )
-          ],
-        ),
-      );
+    final isRunNotification = await AppStorage.isRunNotification(true) ||
+        await AppStorage.isRunNotification(false);
+
+    if (isRunNotification) {
+      await showNavigateOrEmailDialog(context);
     }
   }
 

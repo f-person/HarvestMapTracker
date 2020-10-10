@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
 
-import 'harvest_tracker_app.dart';
+import 'dialog.dart';
 import 'place_action.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -39,7 +39,11 @@ Future<void> setupNotification() async {
       requestSoundPermission: false,
       onDidReceiveLocalNotification: (id, title, body, payload) async {
         didReceiveLocalNotificationSubject.add(ReceivedNotification(
-            id: id, title: title, body: body, payload: payload));
+          id: id,
+          title: title,
+          body: body,
+          payload: payload,
+        ));
       });
 
   var initializationSettings =
@@ -72,31 +76,7 @@ void _requestIOSPermissions() {
 
 Future<void> _configureSelectNotificationSubject(BuildContext context) async {
   selectNotificationSubject.stream.listen((payload) async {
-    await Navigator.push<void>(context, MaterialPageRoute(builder: (context) {
-      return HarvestTrackerApp();
-    }));
-
-    /*  await showDialog<void>(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: Text('Confirm'),
-        content: Text('Please select Navigation or Send Email'),
-        actions: [
-          CupertinoDialogAction(
-            child: Text('Navigate'),
-            onPressed: () async {
-              await PlaceAction.onNavigationAction();
-            },
-          ),
-          CupertinoDialogAction(
-            child: Text('Send Email'),
-            onPressed: () async {
-              await PlaceAction.onSendEmailAction();
-            },
-          )
-        ],
-      ),
-    );*/
+    showNavigateOrEmailDialog(context);
   });
 }
 

@@ -21,7 +21,7 @@ void callbackDispatcher() {
 }
 
 Future<void> checkForHarvest() async {
-  var now = DateTime.now();
+  final now = DateTime.now();
   /* if (now.hour != 5 && now.hour != 20) {
     AppStorage.setRunNotification(true, false);
     AppStorage.setRunNotification(false, false);
@@ -31,13 +31,13 @@ Future<void> checkForHarvest() async {
       (now.hour == 20 && (await AppStorage.isRunNotification(false)))) {
     return;
   } */
-  var today = DateFormat('dd/MM/yyyy').format(now);
-  var tmrw = DateFormat('dd/MM/yyyy').format(now.add(Duration(days: 1)));
+  final today = DateFormat('dd/MM/yyyy').format(now);
+  final tmrw = DateFormat('dd/MM/yyyy').format(now.add(Duration(days: 1)));
 
-  var plList = await AppStorage.getFromStorage();
+  final plList = await AppStorage.getFromStorage();
   var cnt = 0;
   for (var place in plList) {
-    var readyDate = DateFormat('dd/MM/yyyy').parse(place.readyDate);
+    final readyDate = DateFormat('dd/MM/yyyy').parse(place.readyDate);
     if ((now.hour == 20) &&
         (place.readyDate == tmrw || readyDate.isBefore(now))) {
       cnt += place.countTrees;
