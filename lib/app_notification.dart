@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:rxdart/subjects.dart';
 
-import 'app_storage.dart';
-import 'place_action.dart';
 import 'harvest_tracker_app.dart';
+import 'place_action.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();

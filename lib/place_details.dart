@@ -6,7 +6,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 
 import 'place.dart';
-//import 'stub_data.dart';
 
 class PlaceDetails extends StatefulWidget {
   PlaceDetails({
@@ -20,17 +19,16 @@ class PlaceDetails extends StatefulWidget {
         super(key: key);
 
   final Place place;
-  final List<Place> navPlaces; 
-  /* final ValueChanged<Place> onChanged; */
+  final List<Place> navPlaces;
   final void Function(Place) onChanged;
   final void Function(Place) onRemoved;
-  int curNav = 0;
 
   @override
   PlaceDetailsState createState() => PlaceDetailsState();
 }
 
 class PlaceDetailsState extends State<PlaceDetails> {
+  int curNav = 0;
   Place _place;
   GoogleMapController _mapController;
   final Set<Marker> _markers = {};
@@ -67,56 +65,56 @@ class PlaceDetailsState extends State<PlaceDetails> {
       padding: const EdgeInsets.fromLTRB(24.0, 12.0, 24.0, 12.0),
       children: <Widget>[
         Visibility(
-          visible: widget.navPlaces.length > 1,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                RaisedButton(
-                  color: Colors.red,
-                  textColor: Colors.white,
-                  onPressed: () {
-                    setState((){
-                      var prevNav = 0;
-                      if (widget.curNav == 0) {
-                        prevNav = widget.navPlaces.length - 1;
-                      }
-                      _place = widget.navPlaces[prevNav];
-                      _addressController.text = _place.address;
-                      _lastDateController.text = _place.lastDate;
-                      _readyDateController.text = _place.readyDate;
-                      _countTreesController.text = _place.countTrees.toString();
-                      _descriptionController.text = _place.description;
-                      widget.curNav = prevNav;
-                    });
-                  },
-                  child: Text('Prev'),
-                ),
-                RaisedButton(
-                  color: Colors.green[500],
-                  textColor: Colors.white,
-                  onPressed: (){
-                    setState((){
-                      var nextNav = widget.curNav + 1;
-                      if (widget.curNav == widget.navPlaces.length - 1) {
-                        nextNav = 0;
-                      }
-                      _place = widget.navPlaces[nextNav];
-                      _addressController.text = _place.address;
-                      _lastDateController.text = _place.lastDate;
-                      _readyDateController.text = _place.readyDate;
-                      _countTreesController.text = _place.countTrees.toString();
-                      _descriptionController.text = _place.description;
-                      widget.curNav = nextNav;
-                    });
-                  },
-                  child: Text('Next'),
-                )
-              ]
-            ),
-          )
-        ),
+            visible: widget.navPlaces.length > 1,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    RaisedButton(
+                      color: Colors.red,
+                      textColor: Colors.white,
+                      onPressed: () {
+                        setState(() {
+                          var prevNav = 0;
+                          if (curNav == 0) {
+                            prevNav = widget.navPlaces.length - 1;
+                          }
+                          _place = widget.navPlaces[prevNav];
+                          _addressController.text = _place.address;
+                          _lastDateController.text = _place.lastDate;
+                          _readyDateController.text = _place.readyDate;
+                          _countTreesController.text =
+                              _place.countTrees.toString();
+                          _descriptionController.text = _place.description;
+                          curNav = prevNav;
+                        });
+                      },
+                      child: Text('Prev'),
+                    ),
+                    RaisedButton(
+                      color: Colors.green[500],
+                      textColor: Colors.white,
+                      onPressed: () {
+                        setState(() {
+                          var nextNav = curNav + 1;
+                          if (curNav == widget.navPlaces.length - 1) {
+                            nextNav = 0;
+                          }
+                          _place = widget.navPlaces[nextNav];
+                          _addressController.text = _place.address;
+                          _lastDateController.text = _place.lastDate;
+                          _readyDateController.text = _place.readyDate;
+                          _countTreesController.text =
+                              _place.countTrees.toString();
+                          _descriptionController.text = _place.description;
+                          curNav = nextNav;
+                        });
+                      },
+                      child: Text('Next'),
+                    )
+                  ]),
+            )),
         _AddressTextField(
           controller: _addressController,
           onChanged: (value) {
@@ -159,35 +157,34 @@ class PlaceDetailsState extends State<PlaceDetails> {
         ),
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RaisedButton(
-                color: Colors.red,
-                textColor: Colors.white,
-                onPressed: (){
-                  widget.onRemoved(_place);
-                  Navigator.pop(context);
-                }, 
-                child: Text('REMOVE'),
-              ),
-              RaisedButton(
-                color: Colors.green[500],
-                textColor: Colors.white,
-                onPressed: () {
-                  var now = DateTime.now();
-                  var lastDateStr = DateFormat('dd/MM/yyyy').format(now);
-                  var readyDateStr = DateFormat('dd/MM/yyyy').format(DateTime(now.year, now.month + 3, now.day));
+          child:
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            RaisedButton(
+              color: Colors.red,
+              textColor: Colors.white,
+              onPressed: () {
+                widget.onRemoved(_place);
+                Navigator.pop(context);
+              },
+              child: Text('REMOVE'),
+            ),
+            RaisedButton(
+              color: Colors.green[500],
+              textColor: Colors.white,
+              onPressed: () {
+                var now = DateTime.now();
+                var lastDateStr = DateFormat('dd/MM/yyyy').format(now);
+                var readyDateStr = DateFormat('dd/MM/yyyy')
+                    .format(DateTime(now.year, now.month + 3, now.day));
 
-                  _place.lastDate = lastDateStr;
-                  _place.readyDate = readyDateStr;
-                  widget.onChanged(_place);
-                  Navigator.pop(context);
-                },
-                child: Text('HARVEST'),
-              ),
-            ]
-          ),
+                _place.lastDate = lastDateStr;
+                _place.readyDate = readyDateStr;
+                widget.onChanged(_place);
+                Navigator.pop(context);
+              },
+              child: Text('HARVEST'),
+            ),
+          ]),
         ),
         _Map(
           center: LatLng(_place.latitude, _place.longitude),
@@ -357,7 +354,7 @@ class _CountTreesTextField extends StatelessWidget {
         ),
         keyboardType: TextInputType.number,
         inputFormatters: <TextInputFormatter>[
-            WhitelistingTextInputFormatter.digitsOnly
+          FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
         ],
         style: const TextStyle(fontSize: 20.0, color: Colors.black87),
         autocorrect: true,
@@ -599,3 +596,4 @@ class _Reviews extends StatelessWidget {
 }
 
  */
+

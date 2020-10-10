@@ -98,11 +98,8 @@ class PlaceMapState extends State<PlaceMap> {
   final Map<Marker, Place> _markedPlaces = <Marker, Place>{};
 
   final Set<Marker> _markers = {};
-  final Set<Timer> _markerTimers = {};
 
   Marker _pendingMarker;
-
-  MapConfiguration _configuration;
 
   Future<void> onMapCreated(GoogleMapController controller) async {
     mapController.complete(controller);
@@ -285,9 +282,6 @@ class PlaceMapState extends State<PlaceMap> {
     newPlaces[index] = value;
 
     _updateExistingPlaceMarker(place: value);
-    _configuration = MapConfiguration(
-      selectedCategory: AppState.of(context).selectedCategory,
-    );
     AppStorage.setPlaces(newPlaces);
     AppStorage.saveToStorage();
     _onUploadDrivePressed();
@@ -308,10 +302,6 @@ class PlaceMapState extends State<PlaceMap> {
     // Manually update our map configuration here since our map is already
     // updated with the new marker. Otherwise, the map would be reconfigured
     // in the main build method due to a modified AppState.
-    _configuration = MapConfiguration(
-      /* places: newPlaces, */
-      selectedCategory: AppState.of(context).selectedCategory,
-    );
     AppStorage.setPlaces(newPlaces);
     AppStorage.saveToStorage();
     _onUploadDrivePressed();
@@ -348,30 +338,6 @@ class PlaceMapState extends State<PlaceMap> {
 
     _markers.add(updatedMarker);
     _markedPlaces[updatedMarker] = place;
-  }
-
-  Future<void> _switchSelectedCategory(PlaceCategory category) async {
-    AppState.updateWith(context, selectedCategory: category);
-    await _showPlacesForSelectedCategory(category);
-  }
-
-  Future<void> _showPlacesForSelectedCategory(PlaceCategory category) async {
-    setState(() {
-      for (var marker in List.of(_markedPlaces.keys)) {
-        final place = _markedPlaces[marker];
-        final updatedMarker =
-            marker.copyWith(visibleParam: true); //place.category == category,
-
-        _updateMarker(
-          marker: marker,
-          updatedMarker: updatedMarker,
-          place: place,
-        );
-      }
-    });
-
-    await _zoomToFitPlaces(_markedPlaces.values.toList());
-    //_getPlacesForCategory(category, _markedPlaces.values.toList(),)
   }
 
   Future<void> _zoomToFitPlaces(List<Place> places) async {
@@ -495,11 +461,6 @@ class PlaceMapState extends State<PlaceMap> {
       final newPlaces = List<Place>.from(await AppStorage.getFromStorage())
         ..add(newPlace);
 
-      _configuration = MapConfiguration(
-        /* places: newPlaces, */
-        selectedCategory: AppState.of(context).selectedCategory,
-      );
-
       //AppState.updateWith(context, places: newPlaces);
       AppStorage.setPlaces(newPlaces);
       AppStorage.saveToStorage();
@@ -529,8 +490,9 @@ class PlaceMapState extends State<PlaceMap> {
     var plList = await AppStorage.getFromStorage();
     var gDriveMng = GoogleDriveManager();
     await gDriveMng.loginWithGoogle();
-    if (signedIn && googleSignInAccount != null)
+    if (signedIn && googleSignInAccount != null) {
       gDriveMng.uploadFileToGoogleDrive(jsonEncode(plList));
+    }
   }
 
   Future<void> _onSendEmail() async {
@@ -590,68 +552,6 @@ class PlaceMapState extends State<PlaceMap> {
         ),
       );
     });
-  }
-}
-
-class _CategoryButtonBar extends StatelessWidget {
-  const _CategoryButtonBar({
-    Key key,
-    @required this.selectedPlaceCategory,
-    @required this.visible,
-    @required this.onChanged,
-  })  : assert(selectedPlaceCategory != null),
-        assert(visible != null),
-        assert(onChanged != null),
-        super(key: key);
-
-  final PlaceCategory selectedPlaceCategory;
-  final bool visible;
-  final ValueChanged<PlaceCategory> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Visibility(
-      visible: visible,
-      child: Container(
-        padding: const EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 14.0),
-        alignment: Alignment.bottomCenter,
-        child: ButtonBar(
-          alignment: MainAxisAlignment.center,
-          children: <Widget>[
-            RaisedButton(
-              color: selectedPlaceCategory == PlaceCategory.favorite
-                  ? Colors.green[700]
-                  : Colors.lightGreen,
-              child: const Text(
-                'Favorites',
-                style: TextStyle(color: Colors.white, fontSize: 14.0),
-              ),
-              onPressed: () => onChanged(PlaceCategory.favorite),
-            ),
-            RaisedButton(
-              color: selectedPlaceCategory == PlaceCategory.visited
-                  ? Colors.green[700]
-                  : Colors.lightGreen,
-              child: const Text(
-                'Visited',
-                style: TextStyle(color: Colors.white, fontSize: 14.0),
-              ),
-              onPressed: () => onChanged(PlaceCategory.visited),
-            ),
-            RaisedButton(
-              color: selectedPlaceCategory == PlaceCategory.wantToGo
-                  ? Colors.green[700]
-                  : Colors.lightGreen,
-              child: const Text(
-                'Want To Go',
-                style: TextStyle(color: Colors.white, fontSize: 14.0),
-              ),
-              onPressed: () => onChanged(PlaceCategory.wantToGo),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }
 

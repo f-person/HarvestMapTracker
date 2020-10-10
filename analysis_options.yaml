@@ -4,6 +4,9 @@ analyzer:
   strong-mode:
     implicit-casts: false
     implicit-dynamic: false
+  errors:
+    unawaited_futures: ignore
+
 
 linter:
   rules:

@@ -17,7 +17,7 @@ class PlaceAction {
     var list = _selectedPlaces.toList();
     list.forEach((place) {
       var index = list.indexOf(place) + 1;
-      var plText = 'Place ${index}: \n';
+      var plText = 'Place $index: \n';
       plText += 'Address: ${place.address}\n';
       plText += 'Location: (${place.latitude}, ${place.longitude})\n';
       plText += 'Number of Trees: ${place.countTrees}\n';
@@ -37,7 +37,9 @@ class PlaceAction {
 
     try {
       await FlutterEmailSender.send(email);
-    } catch (error) {}
+    } catch (error) {
+      print('could not send email: $error');
+    }
   }
 
   static Future<LatLng> getCurrentLocation() async {
@@ -86,7 +88,6 @@ class PlaceAction {
           .compareTo(distance(
               b.latitude, b.longitude, position.latitude, position.longitude));
     });
-    var origin = navPlaces.first;
     var destination = navPlaces.last;
     var url =
         'https://www.google.com/maps/dir/?api=1&origin=${position.latitude},${position.longitude}';
