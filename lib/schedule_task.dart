@@ -46,7 +46,6 @@ Future<void> checkForHarvest() async {
       cnt += place.countTrees;
     }
   }
-  cnt = 3;
 
   var msg = '';
   if (cnt != 0) {
